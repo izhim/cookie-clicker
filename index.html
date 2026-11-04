@@ -234,64 +234,6 @@
     </div>
   </main>
 
-  <script>
-    let count = 0;
-    const counterEl = document.getElementById('counter');
-    const cookieBtn = document.getElementById('cookieBtn');
-    const cookieContainer = document.getElementById('cookieContainer');
-    const resetBtn = document.getElementById('resetBtn');
-
-    function updateCounter(newCount) {
-      count = newCount;
-      counterEl.textContent = count.toLocaleString();
-
-      // Punchy pulse effect on counter
-      counterEl.style.transform = 'scale(1.2)';
-      setTimeout(() => {
-        counterEl.style.transform = 'scale(1)';
-      }, 100);
-    }
-
-    function createFloatingNumber(x, y) {
-      const floatEl = document.createElement('span');
-      floatEl.classList.add('floating-feedback');
-      floatEl.textContent = '+1';
-
-      // Position relative to cookie container
-      const rect = cookieContainer.getBoundingClientRect();
-      const posX = x ? (x - rect.left) : (rect.width / 2);
-      const posY = y ? (y - rect.top) : (rect.height / 2);
-
-      floatEl.style.left = `${posX}px`;
-      floatEl.style.top = `${posY}px`;
-
-      cookieContainer.appendChild(floatEl);
-
-      floatEl.addEventListener('animationend', () => {
-        floatEl.remove();
-      });
-    }
-
-    function clickCookie(event) {
-      updateCounter(count + 1);
-
-      // Trigger button animation class for keyboard accessibility trigger
-      cookieBtn.classList.add('clicked');
-      setTimeout(() => cookieBtn.classList.remove('clicked'), 100);
-
-      // Add floating +1
-      if (event && event.clientX && event.clientY) {
-        createFloatingNumber(event.clientX, event.clientY);
-      } else {
-        createFloatingNumber();
-      }
-    }
-
-    cookieBtn.addEventListener('click', clickCookie);
-
-    resetBtn.addEventListener('click', () => {
-      updateCounter(0);
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
