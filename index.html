@@ -165,9 +165,163 @@
     .reset-btn:active {
       transform: scale(0.96);
     }
+
+    /* Achievements Section */
+    .achievements-section {
+      width: 100%;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(61, 35, 20, 0.1);
+    }
+
+    .achievements-title {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .trophies-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .trophy-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.75rem 0.5rem;
+      border-radius: 12px;
+      background: #faf4ed;
+      border: 1px solid #ebdacf;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+
+    .trophy-card.locked {
+      opacity: 0.45;
+      filter: grayscale(1);
+    }
+
+    .trophy-card.unlocked {
+      opacity: 1;
+      filter: none;
+      background: #fff9f0;
+      border-color: #f0c05a;
+      box-shadow: 0 4px 12px rgba(212, 163, 115, 0.25);
+    }
+
+    .trophy-card.just-unlocked {
+      animation: trophyPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes trophyPop {
+      0% { transform: scale(0.8); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    .trophy-icon {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 0.4rem;
+    }
+
+    .trophy-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+      margin-bottom: 0.2rem;
+    }
+
+    .trophy-req {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .trophy-badge {
+      display: inline-block;
+      margin-top: 0.3rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .trophy-card.locked .trophy-badge {
+      background: #e0d5cb;
+      color: #7b6555;
+    }
+
+    .trophy-card.unlocked .trophy-badge {
+      background: #ffeaa7;
+      color: #945800;
+    }
+
+    /* Achievement Toast / Notification */
+    .achievement-toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: #3d2314;
+      color: #fff;
+      padding: 0.85rem 1.4rem;
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 1000;
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .achievement-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast-icon {
+      font-size: 1.4rem;
+    }
+
+    .toast-text {
+      text-align: left;
+    }
+
+    .toast-header {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #d4a373;
+      font-weight: 700;
+    }
+
+    .toast-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body oncontextmenu="return false;">
+<body>
+  <div id="achievementToast" class="achievement-toast" role="status" aria-live="polite">
+    <span class="toast-icon">🏆</span>
+    <div class="toast-text">
+      <div class="toast-header">Achievement Unlocked!</div>
+      <div id="toastTitle" class="toast-title">Trophy Name</div>
+    </div>
+  </div>
+
   <main class="container">
     <h1>Cookie Clicker</h1>
     <div class="counter-wrapper">
@@ -232,6 +386,61 @@
     <div class="btn-actions">
       <button id="resetBtn" class="reset-btn" aria-label="Reset cookie count">Reset Count</button>
     </div>
+
+    <!-- Achievements / Trophies Section -->
+    <section class="achievements-section" aria-label="Achievements">
+      <h2 class="achievements-title">Trophies & Achievements</h2>
+      <div class="trophies-list" id="trophiesList">
+        <!-- 10 Clicks Trophy: Bronze -->
+        <div class="trophy-card locked" id="trophy-10" data-milestone="10">
+          <svg class="trophy-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M18 10 H46 V28 C46 36 39.5 42 32 42 C24.5 42 18 36 18 28 Z" fill="#cd7f32" stroke="#8b4513" stroke-width="2"/>
+            <path d="M18 16 H10 C7 16 6 22 8 28 C10 32 14 34 18 34" fill="none" stroke="#8b4513" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M46 16 H54 C57 16 58 22 56 28 C54 32 50 34 46 34" fill="none" stroke="#8b4513" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M28 42 H36 V50 H28 Z" fill="#b87333" stroke="#8b4513" stroke-width="2"/>
+            <path d="M22 50 H42 V56 H22 Z" rx="2" fill="#8b4513"/>
+            <circle cx="32" cy="24" r="5" fill="#e69c53"/>
+            <!-- 10 badge inside -->
+            <text x="32" y="27" text-anchor="middle" font-size="7" font-weight="900" fill="#4a2508">10</text>
+          </svg>
+          <div class="trophy-name">Bronze Baker</div>
+          <div class="trophy-req">10 clicks</div>
+          <span class="trophy-badge" id="badge-10">Locked</span>
+        </div>
+
+        <!-- 100 Clicks Trophy: Silver -->
+        <div class="trophy-card locked" id="trophy-100" data-milestone="100">
+          <svg class="trophy-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M18 10 H46 V28 C46 36 39.5 42 32 42 C24.5 42 18 36 18 28 Z" fill="#c0c0c0" stroke="#7f8c8d" stroke-width="2"/>
+            <path d="M18 16 H10 C7 16 6 22 8 28 C10 32 14 34 18 34" fill="none" stroke="#7f8c8d" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M46 16 H54 C57 16 58 22 56 28 C54 32 50 34 46 34" fill="none" stroke="#7f8c8d" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M28 42 H36 V50 H28 Z" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="2"/>
+            <path d="M22 50 H42 V56 H22 Z" rx="2" fill="#7f8c8d"/>
+            <circle cx="32" cy="24" r="6" fill="#e0e0e0"/>
+            <text x="32" y="27" text-anchor="middle" font-size="6.5" font-weight="900" fill="#2c3e50">100</text>
+          </svg>
+          <div class="trophy-name">Silver Master</div>
+          <div class="trophy-req">100 clicks</div>
+          <span class="trophy-badge" id="badge-100">Locked</span>
+        </div>
+
+        <!-- 1000 Clicks Trophy: Gold -->
+        <div class="trophy-card locked" id="trophy-1000" data-milestone="1000">
+          <svg class="trophy-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M18 10 H46 V28 C46 36 39.5 42 32 42 C24.5 42 18 36 18 28 Z" fill="#f1c40f" stroke="#d68910" stroke-width="2"/>
+            <path d="M18 16 H10 C7 16 6 22 8 28 C10 32 14 34 18 34" fill="none" stroke="#d68910" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M46 16 H54 C57 16 58 22 56 28 C54 32 50 34 46 34" fill="none" stroke="#d68910" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M28 42 H36 V50 H28 Z" fill="#f39c12" stroke="#d68910" stroke-width="2"/>
+            <path d="M22 50 H42 V56 H22 Z" rx="2" fill="#b7950b"/>
+            <circle cx="32" cy="24" r="6.5" fill="#fef9e7"/>
+            <text x="32" y="27" text-anchor="middle" font-size="5.5" font-weight="900" fill="#7d6608">1k</text>
+          </svg>
+          <div class="trophy-name">Golden Legend</div>
+          <div class="trophy-req">1000 clicks</div>
+          <span class="trophy-badge" id="badge-1000">Locked</span>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script src="script.js"></script>
