@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cookie Clicker</title>
+  <style>
+    :root {
+      --bg-color: #f7ede2;
+      --card-bg: #ffffff;
+      --text-main: #3d2314;
+      --text-muted: #845a3f;
+      --cookie-base: #d4a373;
+      --cookie-edge: #b07d4b;
+      --cookie-chip: #4a2810;
+      --shadow: rgba(61, 35, 20, 0.15);
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #fff6ed 0%, #f7ede2 100%);
+      font-family: var(--font-family);
+      color: var(--text-main);
+      user-select: none;
+      -webkit-user-select: none;
+      overflow-x: hidden;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem;
+      border-radius: 24px;
+      background: var(--card-bg);
+      box-shadow: 0 10px 30px var(--shadow);
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+
+    .counter-wrapper {
+      margin-bottom: 2rem;
+    }
+
+    .counter-label {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .counter-value {
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--text-main);
+      transition: transform 0.1s ease;
+      display: inline-block;
+    }
+
+    .cookie-container {
+      position: relative;
+      margin: 1rem 0;
+      cursor: pointer;
+    }
+
+    .cookie-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      outline: none;
+      transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border-radius: 50%;
+      touch-action: manipulation;
+    }
+
+    .cookie-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .cookie-btn:active,
+    .cookie-btn.clicked {
+      transform: scale(0.92);
+    }
+
+    .cookie-svg {
+      width: 220px;
+      height: 220px;
+      filter: drop-shadow(0 12px 20px rgba(74, 40, 16, 0.25));
+      transition: filter 0.1s ease;
+    }
+
+    .cookie-btn:active .cookie-svg {
+      filter: drop-shadow(0 4px 8px rgba(74, 40, 16, 0.25));
+    }
+
+    .floating-feedback {
+      position: absolute;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #935626;
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+      z-index: 10;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -120px) scale(1.3);
+      }
+    }
+
+    .btn-actions {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .reset-btn {
+      background: #f0e6dc;
+      border: none;
+      border-radius: 999px;
+      padding: 0.6rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .reset-btn:hover {
+      background: #e2d2c3;
+      color: var(--text-main);
+    }
+
+    .reset-btn:active {
+      transform: scale(0.96);
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Cookie Clicker</h1>
+    <div class="counter-wrapper">
+      <div class="counter-label">Cookies Baked</div>
+      <div id="counter" class="counter-value" aria-live="polite">0</div>
+    </div>
+
+    <div class="cookie-container" id="cookieContainer">
+      <button id="cookieBtn" class="cookie-btn" aria-label="Click the cookie to bake more">
+        <svg class="cookie-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="cookieGrad" cx="40%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#dfb489" />
+              <stop offset="65%" stop-color="#c99158" />
+              <stop offset="100%" stop-color="#a67137" />
+            </radialGradient>
+            <radialGradient id="chipGrad" cx="30%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#5a3418" />
+              <stop offset="100%" stop-color="#2d1709" />
+            </radialGradient>
+            <filter id="crispShadow" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="1" dy="2" stdDeviation="1" flood-color="#200d04" flood-opacity="0.4" />
+            </filter>
+          </defs>
+
+          <!-- Cookie Base Body -->
+          <path d="M 100,10
+                   C 145,8 185,45 190,95
+                   C 195,145 155,190 100,192
+                   C 48,194 8,155 10,100
+                   C 12,48 50,12 100,10 Z"
+                fill="url(#cookieGrad)" />
+
+          <!-- Bite-texture / uneven edge bump details -->
+          <circle cx="28" cy="70" r="14" fill="#a67137" opacity="0.3" />
+          <circle cx="170" cy="130" r="16" fill="#a67137" opacity="0.3" />
+          <circle cx="80" cy="182" r="12" fill="#a67137" opacity="0.3" />
+
+          <!-- Chocolate Chips -->
+          <g filter="url(#crispShadow)">
+            <!-- Chip 1 -->
+            <path d="M 65,45 C 75,40 85,50 80,60 C 75,70 60,65 65,45 Z" fill="url(#chipGrad)" />
+            <!-- Chip 2 -->
+            <path d="M 125,50 C 140,48 145,62 135,72 C 122,78 115,60 125,50 Z" fill="url(#chipGrad)" />
+            <!-- Chip 3 -->
+            <path d="M 90,90 C 105,82 118,98 108,112 C 95,120 80,105 90,90 Z" fill="url(#chipGrad)" />
+            <!-- Chip 4 -->
+            <path d="M 45,105 C 58,98 68,110 60,125 C 50,135 38,120 45,105 Z" fill="url(#chipGrad)" />
+            <!-- Chip 5 -->
+            <path d="M 140,110 C 155,105 162,120 152,135 C 140,142 130,125 140,110 Z" fill="url(#chipGrad)" />
+            <!-- Chip 6 -->
+            <path d="M 80,145 C 92,138 102,152 92,165 C 80,172 70,158 80,145 Z" fill="url(#chipGrad)" />
+            <!-- Small Chip 7 -->
+            <circle cx="120" cy="155" r="7" fill="url(#chipGrad)" />
+            <!-- Small Chip 8 -->
+            <circle cx="55" cy="75" r="6" fill="url(#chipGrad)" />
+          </g>
+        </svg>
+      </button>
+    </div>
+
+    <div class="btn-actions">
+      <button id="resetBtn" class="reset-btn" aria-label="Reset cookie count">Reset Count</button>
+    </div>
+  </main>
+
+  <script>
+    let count = 0;
+    const counterEl = document.getElementById('counter');
+    const cookieBtn = document.getElementById('cookieBtn');
+    const cookieContainer = document.getElementById('cookieContainer');
+    const resetBtn = document.getElementById('resetBtn');
+
+    function updateCounter(newCount) {
+      count = newCount;
+      counterEl.textContent = count.toLocaleString();
+
+      // Punchy pulse effect on counter
+      counterEl.style.transform = 'scale(1.2)';
+      setTimeout(() => {
+        counterEl.style.transform = 'scale(1)';
+      }, 100);
+    }
+
+    function createFloatingNumber(x, y) {
+      const floatEl = document.createElement('span');
+      floatEl.classList.add('floating-feedback');
+      floatEl.textContent = '+1';
+
+      // Position relative to cookie container
+      const rect = cookieContainer.getBoundingClientRect();
+      const posX = x ? (x - rect.left) : (rect.width / 2);
+      const posY = y ? (y - rect.top) : (rect.height / 2);
+
+      floatEl.style.left = `${posX}px`;
+      floatEl.style.top = `${posY}px`;
+
+      cookieContainer.appendChild(floatEl);
+
+      floatEl.addEventListener('animationend', () => {
+        floatEl.remove();
+      });
+    }
+
+    function clickCookie(event) {
+      updateCounter(count + 1);
+
+      // Trigger button animation class for keyboard accessibility trigger
+      cookieBtn.classList.add('clicked');
+      setTimeout(() => cookieBtn.classList.remove('clicked'), 100);
+
+      // Add floating +1
+      if (event && event.clientX && event.clientY) {
+        createFloatingNumber(event.clientX, event.clientY);
+      } else {
+        createFloatingNumber();
+      }
+    }
+
+    cookieBtn.addEventListener('click', clickCookie);
+
+    resetBtn.addEventListener('click', () => {
+      updateCounter(0);
+    });
+  </script>
+</body>
+</html>
